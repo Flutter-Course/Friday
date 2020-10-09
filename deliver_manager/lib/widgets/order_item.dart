@@ -1,6 +1,10 @@
+import 'package:deliver_manager/models/order.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class OrderItem extends StatelessWidget {
+  final Order order;
+  OrderItem(this.order);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -27,7 +31,7 @@ class OrderItem extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Text(
-                  '50.00\$',
+                  '${order.price}\$',
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -35,8 +39,8 @@ class OrderItem extends StatelessWidget {
               ),
             ),
           ),
-          title: Text('Muhammed Aly'),
-          subtitle: Text('2:00PM'),
+          title: Text(order.deliveryMan),
+          subtitle: Text(DateFormat('hh:mm a').format(order.orderDate)),
           trailing: IconButton(
             icon: Icon(
               Icons.delete,
