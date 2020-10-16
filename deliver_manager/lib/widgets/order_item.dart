@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 
 class OrderItem extends StatelessWidget {
   final Order order;
-  OrderItem(this.order);
+  final Function removeOrder;
+  OrderItem(this.order, this.removeOrder);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -31,7 +32,7 @@ class OrderItem extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Text(
-                  '${order.price}\$',
+                  '${order.price.toStringAsFixed(2)}\$',
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -46,7 +47,10 @@ class OrderItem extends StatelessWidget {
               Icons.delete,
               color: Colors.red,
             ),
-            onPressed: () {},
+            onPressed: () {
+              removeOrder(
+                  DateFormat('yyyyMMdd').format(order.orderDate), order);
+            },
           ),
         ),
       ),

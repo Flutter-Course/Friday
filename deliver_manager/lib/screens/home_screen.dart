@@ -2,7 +2,10 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:deliver_manager/models/order.dart';
+import 'package:deliver_manager/widgets/add_order_sheet.dart';
+import 'package:deliver_manager/widgets/background_container.dart';
 import 'package:deliver_manager/widgets/chart.dart';
+import 'package:deliver_manager/widgets/home_title.dart';
 import 'package:deliver_manager/widgets/order_item.dart';
 import 'package:deliver_manager/widgets/sticky_header_head.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     final ordersList = List.generate(12, (index) {
       return Order(
-        id: index,
         deliveryMan: deliveryMen[Random().nextInt(3)],
         price: Random().nextDouble() * 500,
         orderDate: DateTime.now().subtract(
@@ -58,34 +60,57 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void removeOrder(String key, Order order) {
+    setState(() {
+      (orders[key]['list'] as SplayTreeSet<Order>).remove(order);
+      if (orders[key]['list'].isEmpty) {
+        orders.remove(key);
+      }
+    });
+  }
+
+  void addOrder(Order order) {
+    Navigator.of(context).pop();
+
+    String key = DateFormat('yyyyMMdd').format(order.orderDate);
+    setState(() {
+      if (orders.containsKey(key)) {
+        orders[key]['list'].add(order);
+      } else {
+        orders[key] = Map<String, dynamic>();
+        orders[key]['date'] =
+            DateFormat('EEEE, dd/MM/yyyy').format(order.orderDate);
+        orders[key]['list'] = SplayTreeSet<Order>((Order a, Order b) {
+          String timeA, timeB;
+          timeA = DateFormat('hhmm').format(a.orderDate);
+          timeB = DateFormat('hhmm').format(b.orderDate);
+          return timeA.compareTo(timeB);
+        });
+      }
+
+      orders[key]['list'].add(order);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     bool portrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            height:
-                MediaQuery.of(context).size.height * ((portrait) ? 0.3 : 0.4),
-            width: MediaQuery.of(context).size.width,
-            color: Theme.of(context).primaryColor,
-          ),
+          BackgroundContainer(portrait),
           SafeArea(
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 30),
-                    child: Text(
-                      'Delivery Manager',
-                      style: TextStyle(
-                        color: Theme.of(context).accentColor,
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  HomeTitle(),
                   Chart(),
                   Expanded(
                     child: NotificationListener<ScrollUpdateNotification>(
@@ -114,14 +139,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           final List keys = orders.keys.toList();
                           final key = keys[index];
                           final date = orders[key]['date'];
+                          final SplayTreeSet<Order> list = orders[key]['list'];
                           return StickyHeader(
                             header: StickyHeaderHead(date),
                             content: Column(
-                              children: [
-                                Text('a'),
-                                Text('b'),
-                                Text('c'),
-                              ],
+                              children: list.map((element) {
+                                return OrderItem(element, removeOrder);
+                              }).toList(),
                             ),
                           );
                         },
@@ -158,7 +182,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
               ),
               backgroundColor: Theme.of(context).primaryColor,
-              onPressed: () {},
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AddOrderSheet(deliveryMen, addOrder);
+                  },
+                );
+              },
             ),
           ],
         ),

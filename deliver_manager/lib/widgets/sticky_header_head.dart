@@ -7,13 +7,17 @@ class StickyHeaderHead extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
       ),
       color: Theme.of(context).primaryColor,
       elevation: 10,
       margin: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(context).size.width * 0.04,
-        vertical: 20,
+      ).add(
+        EdgeInsets.only(bottom: 8),
       ),
       child: Container(
         padding: EdgeInsets.all(16),
