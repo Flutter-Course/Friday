@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   HomeTitle(),
-                  Chart(),
+                  Chart(orders),
                   Expanded(
                     child: NotificationListener<ScrollUpdateNotification>(
                       onNotification: (notification) {

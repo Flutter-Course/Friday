@@ -32,45 +32,45 @@ class _AddOrderSheetState extends State<AddOrderSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              color: Theme.of(context).primaryColor,
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 20,
-              ),
-              child: Text(
-                'Let\'s add an order',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+    return Container(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                color: Theme.of(context).primaryColor,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
+                child: Text(
+                  'Let\'s add an order',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Who will deliver?',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+              Container(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Who will deliver?',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  Card(
-                    color: Colors.blue[50],
-                    elevation: 5,
-                    child: SingleChildScrollView(
+                    Card(
+                      color: Colors.blue[50],
+                      elevation: 5,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: DropdownButtonHideUnderline(
@@ -93,143 +93,168 @@ class _AddOrderSheetState extends State<AddOrderSheet> {
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    'When will be delivered?',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                    SizedBox(
+                      height: 15,
                     ),
-                  ),
-                  Row(
-                    children: [
-                      RaisedButton(
-                        color: Colors.blue[50],
-                        child: Text(
-                          DateFormat('EEEE, dd/MM/yyyy').format(
-                            selectedDate,
+                    Text(
+                      'When will be delivered?',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        RaisedButton(
+                          color: Colors.blue[50],
+                          child: Text(
+                            DateFormat('EEEE, dd/MM/yyyy').format(
+                              selectedDate,
+                            ),
+                            style: TextStyle(fontSize: 16),
                           ),
-                          style: TextStyle(fontSize: 16),
+                          onPressed: () async {
+                            DateTime date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now().subtract(
+                                Duration(days: 7),
+                              ),
+                              lastDate: DateTime.now().add(
+                                Duration(days: 90),
+                              ),
+                            );
+                            if (date != null) {
+                              setState(() {
+                                selectedDate = DateTime(
+                                  date.year,
+                                  date.month,
+                                  date.day,
+                                  selectedDate.hour,
+                                  selectedDate.minute,
+                                );
+                              });
+                            }
+                          },
                         ),
-                        onPressed: () async {
-                          DateTime date = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime.now().subtract(
-                              Duration(days: 7),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'at',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        RaisedButton(
+                          color: Colors.blue[50],
+                          child: Text(
+                            DateFormat('hh:mm a').format(
+                              selectedDate,
                             ),
-                            lastDate: DateTime.now().add(
-                              Duration(days: 90),
-                            ),
-                          );
-                          if (date != null) {
-                            setState(() {
-                              selectedDate = DateTime(
-                                date.year,
-                                date.month,
-                                date.day,
-                                selectedDate.hour,
-                                selectedDate.minute,
-                              );
-                            });
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () async {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.fromDateTime(selectedDate),
+                            );
+                            if (time != null) {
+                              setState(() {
+                                selectedDate = DateTime(
+                                  selectedDate.year,
+                                  selectedDate.month,
+                                  selectedDate.day,
+                                  time.hour,
+                                  time.minute,
+                                );
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'What is the price?',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    Card(
+                      elevation: 5,
+                      child: TextField(
+                        controller: controller,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.blue[50],
+                          border: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedErrorBorder: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: FlatButton(
+                        color: Colors.blue[900],
+                        child: Text(
+                          'Add Order',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: () {
+                          try {
+                            double price = double.parse(controller.text);
+                            if (price < 0) {
+                              throw 'Negative price';
+                            }
+                            Order newOrder = Order(
+                              deliveryMan: selectedDeliveryMan,
+                              price: price,
+                              orderDate: selectedDate,
+                            );
+                            widget.addOrder(newOrder);
+                          } catch (error) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Invalid order data'),
+                                  content:
+                                      Text('You have entered invalid price.'),
+                                  actions: [
+                                    FlatButton(
+                                      child: Text('Ok'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           }
                         },
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'at',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      RaisedButton(
-                        color: Colors.blue[50],
-                        child: Text(
-                          DateFormat('hh:mm a').format(
-                            selectedDate,
-                          ),
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        onPressed: () async {
-                          final time = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.fromDateTime(selectedDate),
-                          );
-                          if (time != null) {
-                            setState(() {
-                              selectedDate = DateTime(
-                                selectedDate.year,
-                                selectedDate.month,
-                                selectedDate.day,
-                                time.hour,
-                                time.minute,
-                              );
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'What is the price?',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
                     ),
-                  ),
-                  Card(
-                    elevation: 5,
-                    child: TextField(
-                      controller: controller,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.blue[50],
-                        border: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        focusedErrorBorder: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: FlatButton(
-                      color: Colors.blue[900],
-                      child: Text(
-                        'Add Order',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onPressed: () {
-                        Order newOrder = Order(
-                          deliveryMan: selectedDeliveryMan,
-                          price: double.parse(controller.text),
-                          orderDate: selectedDate,
-                        );
-                        widget.addOrder(newOrder);
-                      },
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
