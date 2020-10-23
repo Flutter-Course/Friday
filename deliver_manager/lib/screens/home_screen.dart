@@ -13,12 +13,14 @@ import 'package:intl/intl.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
 class HomeScreen extends StatefulWidget {
+  final Function toggleTheme;
+  HomeScreen(this.toggleTheme);
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool showUpButton = false;
+  bool showUpButton = false, dark = false;
   ScrollController controller = ScrollController();
   SplayTreeMap<String, Map<String, dynamic>> orders =
       SplayTreeMap<String, Map<String, dynamic>>((String a, String b) {
@@ -101,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     bool portrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
+      backgroundColor: Theme.of(context).accentColor,
       body: Stack(
         children: [
           BackgroundContainer(portrait),
@@ -111,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   HomeTitle(),
-                  Chart(orders),
+                  Chart(GlobalKey(), orders),
                   Expanded(
                     child: NotificationListener<ScrollUpdateNotification>(
                       onNotification: (notification) {
@@ -176,6 +179,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller.jumpTo(0.0);
                 },
               ),
+            Spacer(),
+            Icon(
+              Icons.wb_sunny,
+              color: Colors.amber,
+            ),
+            Switch(
+              value: dark,
+              activeColor: Colors.black,
+              inactiveThumbColor: Colors.amber,
+              inactiveTrackColor: Colors.amber[100],
+              onChanged: (value) {
+                setState(() {
+                  dark = value;
+                });
+                widget.toggleTheme();
+              },
+            ),
+            Icon(
+              Icons.brightness_3,
+            ),
             FloatingActionButton(
               child: Icon(
                 Icons.add,

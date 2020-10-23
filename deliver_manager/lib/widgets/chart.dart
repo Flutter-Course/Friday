@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 class Chart extends StatefulWidget {
   final SplayTreeMap<String, Map<String, dynamic>> orders;
 
-  Chart(this.orders);
+  Chart(key, this.orders) : super(key: key);
   @override
   _ChartState createState() => _ChartState();
 }
@@ -50,6 +50,7 @@ class _ChartState extends State<Chart> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
+      color: Theme.of(context).accentColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -167,27 +168,30 @@ class _ChartState extends State<Chart> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
                                       children: [
-                                        Container(
-                                          width: 20,
-                                          height: count['Muhammed Aly'] *
-                                              constraints.maxHeight /
-                                              20,
-                                          color: Colors.blue,
-                                        ),
-                                        Container(
-                                          width: 20,
-                                          height: count['Toka Ehab'] *
-                                              constraints.maxHeight /
-                                              20,
-                                          color: Colors.yellow,
-                                        ),
-                                        Container(
-                                          width: 20,
-                                          height: count['Ahmed Aly'] *
-                                              constraints.maxHeight /
-                                              20,
-                                          color: Colors.purple,
-                                        ),
+                                        if (count['Muhammed Aly'] != 0)
+                                          Container(
+                                            width: 20,
+                                            height: count['Muhammed Aly'] *
+                                                constraints.maxHeight /
+                                                20,
+                                            color: Colors.blue,
+                                          ),
+                                        if (count['Toka Ehab'] != 0)
+                                          Container(
+                                            width: 20,
+                                            height: count['Toka Ehab'] *
+                                                constraints.maxHeight /
+                                                20,
+                                            color: Colors.yellow,
+                                          ),
+                                        if (count['Ahmed Aly'] != 0)
+                                          Container(
+                                            width: 20,
+                                            height: count['Ahmed Aly'] *
+                                                constraints.maxHeight /
+                                                20,
+                                            color: Colors.purple,
+                                          ),
                                       ],
                                     ),
                                   ),
