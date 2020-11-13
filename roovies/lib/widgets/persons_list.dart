@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:roovies/helpers/dummy_data.dart';
+import 'package:roovies/models/person.dart';
+import 'package:roovies/providers/persons_provider.dart';
 
 class PersonsList extends StatelessWidget {
   @override
@@ -12,6 +15,8 @@ class PersonsList extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: DummyData.nowPlaying.length,
         itemBuilder: (context, index) {
+          Person person =
+              Provider.of<PersonsProvider>(context).trendingPersons[index];
           return Padding(
             padding: EdgeInsets.all(8.0),
             child: Column(
@@ -23,7 +28,7 @@ class PersonsList extends StatelessWidget {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: NetworkImage(
-                          DummyData.nowPlaying[index]['poster_url'],
+                          person.posterUrl,
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -34,7 +39,7 @@ class PersonsList extends StatelessWidget {
                   flex: 3,
                   child: FittedBox(
                     child: Text(
-                      DummyData.nowPlaying[index]['movie_name'],
+                      person.name,
                       style: TextStyle(
                         color: Colors.white,
                       ),

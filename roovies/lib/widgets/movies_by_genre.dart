@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:roovies/providers/genres_provider.dart';
 import 'package:roovies/widgets/movies_list.dart';
 
 class MoviesByGenre extends StatefulWidget {
@@ -12,7 +14,10 @@ class _MoviesByGenreState extends State<MoviesByGenre>
   @override
   void initState() {
     super.initState();
-    controller = TabController(length: 7, vsync: this);
+    controller = TabController(
+        length:
+            Provider.of<GenresProvider>(context, listen: false).genres.length,
+        vsync: this);
   }
 
   @override
@@ -32,42 +37,18 @@ class _MoviesByGenreState extends State<MoviesByGenre>
           bottom: TabBar(
             isScrollable: true,
             controller: controller,
-            tabs: [
-              Tab(
-                text: 'Action',
-              ),
-              Tab(
-                text: 'Comedy',
-              ),
-              Tab(
-                text: 'Horror',
-              ),
-              Tab(
-                text: 'Sci-Fi',
-              ),
-              Tab(
-                text: 'Romance',
-              ),
-              Tab(
-                text: 'Documentries',
-              ),
-              Tab(
-                text: 'Thriller',
-              ),
-            ],
+            tabs: Provider.of<GenresProvider>(context).genres.map((genre) {
+              return Tab(
+                text: genre.name,
+              );
+            }).toList(),
           ),
         ),
         body: TabBarView(
           controller: controller,
-          children: [
-            MoviesList(),
-            MoviesList(),
-            MoviesList(),
-            MoviesList(),
-            MoviesList(),
-            MoviesList(),
-            MoviesList(),
-          ],
+          children: Provider.of<GenresProvider>(context).genres.map((genre) {
+            return MoviesList.byGenre(genre.id);
+          }).toList(),
         ),
       ),
     );
