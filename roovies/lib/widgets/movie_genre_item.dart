@@ -6,6 +6,7 @@ class MovieGenreItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.all(4),
       margin: EdgeInsets.only(right: 5, bottom: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
@@ -15,6 +16,7 @@ class MovieGenreItem extends StatelessWidget {
         genreName,
         style: TextStyle(
           color: Colors.white,
+          fontSize: 12,
         ),
       ),
     );

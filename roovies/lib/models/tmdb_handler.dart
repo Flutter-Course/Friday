@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:roovies/helpers/api_keys.dart';
 import 'package:roovies/models/genre.dart';
 import 'package:roovies/models/movie.dart';
+import 'package:roovies/models/movie_details.dart';
 import 'package:roovies/models/person.dart';
 
 class TMDBHandler {
@@ -76,5 +77,23 @@ class TMDBHandler {
     return (response.data['results'] as List).map((movie) {
       return Movie.fromJson(movie);
     }).toList();
+  }
+
+  Future<MovieDetails> getMovieDetailsById(int movieId) async {
+    String url = '$mainUrl/movie/$movieId';
+    final params = {
+      'api_key': ApiKeys.apiKey,
+    };
+    Response response = await _dio.get(url, queryParameters: params);
+    return MovieDetails.fromJson(response.data);
+  }
+
+  Future<String> getVideoKeyByMovieId(int movieId) async {
+    String url = '$mainUrl/movie/$movieId/videos';
+    final params = {
+      'api_key': ApiKeys.apiKey,
+    };
+    Response response = await _dio.get(url, queryParameters: params);
+    return response.data['results'][0]['key'];
   }
 }

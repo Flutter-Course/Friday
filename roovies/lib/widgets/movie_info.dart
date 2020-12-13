@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:roovies/widgets/movie_info_item.dart';
 
 class MovieInfo extends StatelessWidget {
+  final String budget, duration, releaseDate;
+  MovieInfo(this.budget, this.duration, this.releaseDate);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -9,9 +11,9 @@ class MovieInfo extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          MovieInfoItem('Budget', '10000'),
-          MovieInfoItem('Duration', '120'),
-          MovieInfoItem('Release Date', '2020-11-13'),
+          MovieInfoItem('Budget', budget),
+          MovieInfoItem('Duration', duration),
+          MovieInfoItem('Release Date', releaseDate),
         ],
       ),
     );
