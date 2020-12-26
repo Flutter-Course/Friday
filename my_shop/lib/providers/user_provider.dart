@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class UserProvider with ChangeNotifier {
   Future<String> register(String email, String password) async {
@@ -50,6 +53,49 @@ class UserProvider with ChangeNotifier {
       return 'Network error.';
     } catch (e) {
       return 'Error has been occurred, please try again later.';
+    }
+  }
+
+  Future<bool> completeProfile(
+    String username,
+    String mobileNumber,
+    String address,
+    LatLng position,
+    File image,
+  ) async {
+    try {
+      String id = FirebaseAuth.instance.currentUser.uid;
+      Reference ref = FirebaseStorage.instance
+          .ref('users/$id.${image.path.split('.').last}');
+      await ref.putFile(image);
+      String imageUrl = await ref.getDownloadURL();
+      await FirebaseFirestore.instance.collection('users').doc(id).set({
+        'username': username,
+        'mobileNumber': mobileNumber,
+        'address': address,
+        'lat': position.latitude,
+        'lng': position.longitude,
+        'photoUrl': imageUrl,
+      });
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> isProfileComplete() async {
+    try {
+      String id = FirebaseAuth.instance.currentUser.uid;
+      final document =
+          await FirebaseFirestore.instance.collection('users').doc(id).get();
+      if (document.exists) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
     }
   }
 }

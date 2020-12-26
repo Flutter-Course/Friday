@@ -1,7 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:my_shop/providers/user_provider.dart';
-import 'package:my_shop/screens/home_screen.dart';
+import 'package:my_shop/screens/transit_screen.dart';
 import 'package:my_shop/widgets/auth_widgets/auth_title.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +42,7 @@ class _AuthFormState extends State<AuthForm> {
           .login(email, password);
       if (error == null) {
         //home screen
-        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        Navigator.of(context).pushReplacementNamed(TransitScreen.routeName);
       } else {
         setState(() {
           loading = false;
@@ -64,7 +64,7 @@ class _AuthFormState extends State<AuthForm> {
           .register(email, password);
       if (error == null) {
         //home screen
-        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        Navigator.of(context).pushReplacementNamed(TransitScreen.routeName);
       } else {
         setState(() {
           loading = false;

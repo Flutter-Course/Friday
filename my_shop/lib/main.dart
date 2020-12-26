@@ -3,9 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:my_shop/providers/user_provider.dart';
 import 'package:my_shop/screens/auth_screen.dart';
-import 'package:my_shop/screens/collecting_data_screen.dart';
 import 'package:my_shop/screens/home_screen.dart';
 import 'package:my_shop/screens/splash_screen.dart';
+import 'package:my_shop/screens/transit_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
                 return SplashScreen();
               } else {
                 if (FirebaseAuth.instance.currentUser != null) {
-                  return CollectingDataScreen();
+                  return TransitScreen();
                 }
                 return AuthScreen();
               }
@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
         routes: {
           AuthScreen.routeName: (context) => AuthScreen(),
           HomeScreen.routeName: (context) => HomeScreen(),
+          TransitScreen.routeName: (context) => TransitScreen(),
         },
       ),
     );
