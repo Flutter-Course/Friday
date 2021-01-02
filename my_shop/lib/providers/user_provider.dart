@@ -5,8 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:my_shop/models/customer.dart';
+import 'package:my_shop/models/user.dart' as myShop;
+import 'package:my_shop/models/vendor.dart';
 
 class UserProvider with ChangeNotifier {
+  myShop.User currentUser;
   Future<String> register(String email, String password) async {
     try {
       await FirebaseAuth.instance
@@ -76,6 +80,7 @@ class UserProvider with ChangeNotifier {
         'lat': position.latitude,
         'lng': position.longitude,
         'photoUrl': imageUrl,
+        'type': 'Customer',
       });
       return true;
     } catch (e) {
@@ -87,14 +92,47 @@ class UserProvider with ChangeNotifier {
   Future<bool> isProfileComplete() async {
     try {
       String id = FirebaseAuth.instance.currentUser.uid;
+      String email = FirebaseAuth.instance.currentUser.email;
       final document =
           await FirebaseFirestore.instance.collection('users').doc(id).get();
       if (document.exists) {
+        if (document.data()['type'] == 'Customer') {
+          currentUser = Customer.fromFirestore(id, email, document);
+        } else {
+          currentUser = Vendor.fromFirestore(id, email, document);
+        }
+        await currentUser.init();
         return true;
       } else {
         return false;
       }
     } catch (error) {
+      return false;
+    }
+  }
+
+  bool get isCustomer => currentUser is Customer;
+
+  Future<bool> toggleUserType() async {
+    try {
+      if (isCustomer) {
+        //to vendor
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.userId)
+            .update({'type': 'Vendor'});
+        currentUser = Vendor.fromCustomer(currentUser);
+      } else {
+        //to customer
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.userId)
+            .update({'type': 'Customer'});
+        currentUser = Customer.fromVendor(currentUser);
+      }
+      notifyListeners();
+      return true;
+    } catch (e) {
       return false;
     }
   }
