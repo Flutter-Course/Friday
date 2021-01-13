@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_shop/screens/auth_screen.dart';
 import 'package:my_shop/widgets/collecting_data_widgets/collecting_data_title.dart';
-import 'package:my_shop/widgets/collecting_data_widgets/image_frame.dart';
+import 'file:///D:/Workspace/flutter%20projects/Friday/my_shop/lib/widgets/misc/image_frame.dart';
 import 'package:my_shop/widgets/misc/arrow_button.dart';
 
 class CollectingDataOne extends StatefulWidget {

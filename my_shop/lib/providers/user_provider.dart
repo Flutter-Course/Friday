@@ -11,6 +11,7 @@ import 'package:my_shop/models/vendor.dart';
 
 class UserProvider with ChangeNotifier {
   myShop.User currentUser;
+
   Future<String> register(String email, String password) async {
     try {
       await FirebaseAuth.instance
@@ -107,6 +108,7 @@ class UserProvider with ChangeNotifier {
         return false;
       }
     } catch (error) {
+      print(error);
       return false;
     }
   }
@@ -135,5 +137,21 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<bool> addProduct(
+      title, description, forWho, category, price, photos) async {
+    bool added = await (currentUser as Vendor)
+        .addProduct(title, description, forWho, category, price, photos);
+    notifyListeners();
+    return added;
+  }
+
+  Future<bool> editProduct(id, title, description, forWho, category, price,
+      photos, available, date) async {
+    bool edited = await (currentUser as Vendor).editProduct(id, title,
+        description, forWho, category, price, photos, available, date);
+    notifyListeners();
+    return edited;
   }
 }

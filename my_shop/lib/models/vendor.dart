@@ -2,9 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:my_shop/models/Product.dart';
+import 'package:my_shop/models/product.dart';
 import 'package:my_shop/models/customer.dart';
 import 'package:my_shop/models/user.dart';
 
@@ -17,7 +16,7 @@ class Vendor extends User {
   Future<void> init() async {
     final queryData = await FirebaseFirestore.instance
         .collection('products')
-        .where('vendorId', isEqualTo: userId)
+        .where('vendorID', isEqualTo: userId)
         .get();
     if (queryData.docs.length > 0) {
       products = queryData.docs
@@ -45,7 +44,7 @@ class Vendor extends User {
   }
 
   Future<bool> addProduct(
-      title, description, forWho, category, vendorID, price, photos) async {
+      title, description, forWho, category, price, photos) async {
     try {
       List<String> photosUrls = await uploadImages(photos);
       final date = DateFormat('yyyyMMdd').format(DateTime.now());
@@ -69,29 +68,43 @@ class Vendor extends User {
     }
   }
 
-  Future<bool> editProduct(id, title, description, forWho, category, vendorID,
-      price, photos, available, date) async {
+  Future<List<String>> updatePhotos(List<dynamic> photos) async {
+    List<String> result = [];
+    List<File> files = [];
+    photos.forEach((element) {
+      if (element is String) {
+        result.add(element);
+      } else {
+        files.add(element);
+      }
+    });
+
+    result.addAll(await uploadImages(files));
+    return result;
+  }
+
+  Future<bool> editProduct(id, title, description, forWho, category, price,
+      photos, available, date) async {
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection('products')
-          .doc(id)
-          .update({
+      List<String> photosUrls = await updatePhotos(photos);
+      await FirebaseFirestore.instance.collection('products').doc(id).update({
         'title': title,
         'description': description,
         'forWho': forWho,
         'category': category,
         'price': price,
-//        'photos': photosUrls,
         'available': available,
+        'photos': photosUrls,
       });
       int index = products.indexWhere((element) => element.id == id);
       products.removeAt(index);
       products.insert(
           index,
           Product(title, description, forWho, category, id, date, userId, price,
-              available, []));
+              available, photosUrls));
       return true;
     } catch (e) {
+      print(e);
       return false;
     }
   }

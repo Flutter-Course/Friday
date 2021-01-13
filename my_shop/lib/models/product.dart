@@ -43,8 +43,10 @@ class Product {
         this._category = document.data()['category'],
         this._id = document.id,
         this._date = document.data()['date'],
-        this._vendorId = document.data()['vendorId'],
-        this._price = document.data()['price'],
+        this._vendorId = document.data()['vendorID'],
+        this._price = document.data()['price'].toDouble(),
         this._available = document.data()['available'],
-        this._photosUrls = document.data()['photoUrls'];
+        this._photosUrls = (document.data()['photos'] as List)
+            .map((e) => e.toString())
+            .toList();
 }
